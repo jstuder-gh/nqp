@@ -2494,6 +2494,7 @@ QAST::MASTOperations.add_core_op('null', -> $qastcomp, $op {
         MAST::InstructionList.new($il, $res_reg, $MVM_reg_obj)
     }
 });
+QAST::MASTOperations.add_core_moarop_mapping('inactive', 'inactive');
 QAST::MASTOperations.add_core_moarop_mapping('null_s', 'null_s');
 QAST::MASTOperations.add_core_moarop_mapping('what', 'getwhat', :decont(0));
 QAST::MASTOperations.add_core_moarop_mapping('how', 'gethow', :decont(0));
@@ -2540,6 +2541,7 @@ QAST::MASTOperations.add_core_moarop_mapping('decont_n', 'decont_n');
 QAST::MASTOperations.add_core_moarop_mapping('decont_s', 'decont_s');
 QAST::MASTOperations.add_core_moarop_mapping('isnull', 'isnull');
 QAST::MASTOperations.add_core_moarop_mapping('isnull_s', 'isnull_s');
+QAST::MASTOperations.add_core_moarop_mapping('isinactive', 'isinactive');
 QAST::MASTOperations.add_core_moarop_mapping('istrue', 'istrue', :decont(0));
 QAST::MASTOperations.add_core_moarop_mapping('isfalse', 'isfalse', :decont(0));
 QAST::MASTOperations.add_core_moarop_mapping('istype', 'istype', :decont(0, 1));
