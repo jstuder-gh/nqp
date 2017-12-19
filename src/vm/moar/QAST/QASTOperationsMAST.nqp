@@ -983,6 +983,34 @@ QAST::MASTOperations.add_core_op('ifnull', -> $qastcomp, $op {
     $expr
 });
 
+QAST::MASTOperations.add_core_op('ifnullordeleted', -> $qastcomp, $op {
+    if +$op.list != 2 {
+        nqp::die("The 'ifnullordeleted' op needs 2 operands, got " ~ +$op.list);
+    }
+
+    # Compile the expression.
+    my $regalloc := $*REGALLOC;
+    my $res_reg := $regalloc.fresh_o();
+    my $expr := $qastcomp.as_mast($op[0], :want($MVM_reg_obj));
+
+    # Emit null check.
+    my $lbl := MAST::Label.new();
+    push_op($expr.instructions, 'set', $res_reg, $expr.result_reg);
+    push_op($expr.instructions, 'ifnotnullordeleted', $expr.result_reg, $lbl);
+
+    # Emit "then" part.
+    my $then := $qastcomp.as_mast($op[1], :want($MVM_reg_obj));
+    $regalloc.release_register($expr.result_reg, $MVM_reg_obj);
+    $expr.append($then);
+    push_op($expr.instructions, 'set', $res_reg, $then.result_reg);
+    nqp::push($expr.instructions, $lbl);
+    $regalloc.release_register($then.result_reg, $MVM_reg_obj);
+    my $newer := MAST::InstructionList.new(nqp::list(), $res_reg, $MVM_reg_obj);
+    $expr.append($newer);
+
+    $expr
+});
+
 # Loops.
 for ('', 'repeat_') -> $repness {
     for <while until> -> $op_name {
@@ -2494,6 +2522,7 @@ QAST::MASTOperations.add_core_op('null', -> $qastcomp, $op {
         MAST::InstructionList.new($il, $res_reg, $MVM_reg_obj)
     }
 });
+QAST::MASTOperations.add_core_moarop_mapping('deleted', 'deleted');
 QAST::MASTOperations.add_core_moarop_mapping('null_s', 'null_s');
 QAST::MASTOperations.add_core_moarop_mapping('what', 'getwhat', :decont(0));
 QAST::MASTOperations.add_core_moarop_mapping('how', 'gethow', :decont(0));
@@ -2540,6 +2569,7 @@ QAST::MASTOperations.add_core_moarop_mapping('decont_n', 'decont_n');
 QAST::MASTOperations.add_core_moarop_mapping('decont_s', 'decont_s');
 QAST::MASTOperations.add_core_moarop_mapping('isnull', 'isnull');
 QAST::MASTOperations.add_core_moarop_mapping('isnull_s', 'isnull_s');
+QAST::MASTOperations.add_core_moarop_mapping('isdeleted', 'isdeleted');
 QAST::MASTOperations.add_core_moarop_mapping('istrue', 'istrue', :decont(0));
 QAST::MASTOperations.add_core_moarop_mapping('isfalse', 'isfalse', :decont(0));
 QAST::MASTOperations.add_core_moarop_mapping('istype', 'istype', :decont(0, 1));
