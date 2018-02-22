@@ -13,6 +13,7 @@ my %const_map := nqp::hash(
     'CCLASS_ALPHANUMERIC',  2048,
     'CCLASS_NEWLINE',       4096,
     'CCLASS_WORD',          8192,
+    'CCLASS_NBSP',          16384,
     
     'HLL_ROLE_NONE',        0,
     'HLL_ROLE_INT',         1,
