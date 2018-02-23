@@ -4727,6 +4727,7 @@ public final class Ops {
     private static final int CCLASS_ALPHANUMERIC = 2048;
     private static final int CCLASS_NEWLINE      = 4096;
     private static final int CCLASS_WORD         = 8192;
+    private static final int CCLASS_NBSP         = 16384;
     private static final int PUNCT_TYPES =
         (1 << Character.CONNECTOR_PUNCTUATION) | (1 << Character.DASH_PUNCTUATION) |
         (1 << Character.END_PUNCTUATION) | (1 << Character.FINAL_QUOTE_PUNCTUATION) |
@@ -4781,6 +4782,8 @@ public final class Ops {
             return ((1 << Character.getType(test)) & PUNCT_TYPES) != 0 ? 1 : 0;
         case CCLASS_ALPHANUMERIC:
             return Character.isLetterOrDigit(test) ? 1 : 0;
+        case CCLASS_NBSP:
+            return test == '\u00A0' || test == '\u2007' || test == '\u202F' || test == '\uFEFF';
         default:
             return 0;
         }
