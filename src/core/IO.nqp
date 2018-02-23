@@ -294,20 +294,17 @@ sub join($delim, @things) {
 }
 
 sub words(str $words) {
-    my %nbsp := nqp::hash(
-        "\x00A0", 1,
-        "\x2007", 1,
-        "\x202F", 1,
-        "\xFEFF", 1,
-    );
     my @result;
+    my int $nbsp  := nqp::const::CCLASS_NBSP;
+    my int $wscls := nqp::const::CCLASS_WHITESPACE;
+
     my int $pos := 0;
     my int $eos := nqp::chars($words);
     my int $ws;
-    while ($pos := nqp::findnotcclass(nqp::const::CCLASS_WHITESPACE, $words, $pos, $eos)) < $eos {
+    while ($pos := nqp::findnotcclass($wscls, $words, $pos, $eos)) < $eos {
         # Search for another white space character as long as we hit non-breakable spaces.
         $ws := $pos;
-        while %nbsp{nqp::substr($words, $ws := nqp::findcclass(nqp::const::CCLASS_WHITESPACE, $words, $ws, $eos), 1)} {
+        while nqp::iscclass( $nbsp, $words, $ws := nqp::findcclass($wscls, $words, $ws, $eos) ) {
             $ws := $ws + 1
         }
         nqp::push(@result, nqp::substr($words, $pos, $ws - $pos));
