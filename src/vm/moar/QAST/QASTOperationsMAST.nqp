@@ -2919,6 +2919,7 @@ QAST::MASTOperations.add_core_moarop_mapping('getcodelocation', 'getcodelocation
 # process related opcodes
 QAST::MASTOperations.add_core_moarop_mapping('exit', 'exit', 0);
 QAST::MASTOperations.add_core_moarop_mapping('sleep', 'sleep', 0);
+QAST::MASTOperations.add_core_moarop_mapping('getsignals', 'getsignals');
 QAST::MASTOperations.add_core_moarop_mapping('getenvhash', 'getenvhash');
 QAST::MASTOperations.add_core_moarop_mapping('getpid', 'getpid');
 QAST::MASTOperations.add_core_moarop_mapping('getppid', 'getppid');
