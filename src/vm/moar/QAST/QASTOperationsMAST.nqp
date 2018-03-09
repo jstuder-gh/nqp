@@ -2293,6 +2293,7 @@ QAST::MASTOperations.add_core_moarop_mapping('replace', 'replace');
 QAST::MASTOperations.add_core_moarop_mapping('flip', 'flip');
 QAST::MASTOperations.add_core_moarop_mapping('concat', 'concat_s');
 QAST::MASTOperations.add_core_moarop_mapping('join', 'join');
+QAST::MASTOperations.add_core_moarop_mapping('words', 'words');
 QAST::MASTOperations.add_core_moarop_mapping('split', 'split');
 QAST::MASTOperations.add_core_moarop_mapping('chr', 'chr');
 QAST::MASTOperations.add_core_moarop_mapping('ordfirst', 'ordfirst');
