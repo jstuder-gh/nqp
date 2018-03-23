@@ -621,6 +621,11 @@ class QRegex::P6Regex::Actions is HLL::Actions {
     method assertion:sym<[>($/) {
         my $clist := $<cclass_elem>;
         my $qast  := $clist[0].ast;
+        if +@($qast) == 0 {
+            $/.panic('Cannot have an empty character class. If you intended to include '
+                ~ 'whitespace within this character class, escape it with \\'
+            );
+        }
         if $qast.negate && $qast.rxtype eq 'subrule' {
             $qast.subtype('zerowidth');
             $qast := QAST::Regex.new(:rxtype<concat>, :node($/),
