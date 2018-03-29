@@ -217,12 +217,12 @@
       <table class="table table-striped table-condensed table-bordered">
         <thead>
           <th>
-            <a href="" ng-click="reverse = predicate == 'Name' ? !reverse : false; predicate = 'Name';">Name</a>
+            <a href="" ng-click="setPredOrReverse({p: 'Name'})">Name</a>
             <input ng-model="NameFilter">
           </th>
-          <th><a href="" ng-click="reverse = predicate == 'Entries' ? !reverse : true; predicate = 'Entries';">Entries</a></th>
-          <th><a href="" ng-click="reverse = predicate == 'InclusiveTime' ? !reverse : true; predicate = 'InclusiveTime';">Inclusive Time</a></th>
-          <th><a href="" ng-click="reverse = predicate == 'ExclusiveTime' ? !reverse : true; predicate = 'ExclusiveTime';">Exclusive Time</a></th>
+          <th><a href="" ng-click="setPredOrReverse({p: 'Entries',       r: true})">Entries</a></th>
+          <th><a href="" ng-click="setPredOrReverse({p: 'InclusiveTime', r: true})">Inclusive Time</a></th>
+          <th><a href="" ng-click="setPredOrReverse({p: 'ExclusiveTime', r: true})">Exclusive Time</a></th>
           <th>
             <span class="text-danger" tooltip-placement="bottom" tooltip="Unoptimized interpreted code">Interp</span> /
             <span class="text-warning" tooltip-placement="bottom" tooltip="Type-specialized interpreted code">Spesh</span> /
@@ -383,11 +383,11 @@
           <table class="table table-striped table-condensed table-bordered" ng-show="Callees.length > 0">
             <thead>
               <th>
-                <a href="" ng-click="reverse = predicate == 'Name' ? !reverse : false; predicate = 'Name';">Name</a>
+                <a href="" ng-click="setPredOrReverse({p: 'Name'})">Name</a>
                 <input ng-model="NameFilter">
               </th>
-              <th><a href="" ng-click="reverse = predicate == 'Calls' ? !reverse : true; predicate = 'Calls';">Calls</a></th>
-              <th><a href="" ng-click="reverse = predicate == 'TimePercent' ? !reverse : true; predicate = 'TimePercent';">Time In Callee</a></th>
+              <th><a href="" ng-click="setPredOrReverse({p: 'Calls', r: true})">Calls</a></th>
+              <th><a href="" ng-click="setPredOrReverse({p: 'TimePercent', r: true})">Time In Callee</a></th>
               <th>
                 <span class="text-danger" tooltip-placement="bottom" tooltip="Unoptimized interpreted code">Interp</span> /
                 <span class="text-warning" tooltip-placement="bottom" tooltip="Type-specialized interpreted code">Spesh</span> /
@@ -456,10 +456,10 @@
       <table class="table table-striped table-condensed table-bordered">
         <thead>
           <th>
-            <a href="" ng-click="reverse = predicate == 'Name' ? !reverse : false; predicate = 'Name';">Name</a>
+            <a href="" ng-click="setPredOrReverse({p: 'Name'})">Name</a>
             <input ng-model="NameFilter">
           </th>
-          <th><a href="" ng-click="reverse = predicate == 'Allocations' ? !reverse : true; predicate = 'Allocations';">Allocations</a></th>
+          <th><a href="" ng-click="setPredOrReverse({p: 'Allocations', r: true})">Allocations</a></th>
           <th>Allocating Routines</th>
         </thead>
         <tbody>
@@ -497,10 +497,10 @@
               <table class="table table-striped table-condensed table-bordered">
                 <thead>
                   <th>
-                    <a href="" ng-click="routineReverse = routinePredicate == 'Name' ? !routineReverse : false; routinePredicate = 'Name';">Name</a>
+                    <a href="" ng-click="setPredOrReverse({p: 'Name', pName: 'routinePredicate', rName: 'routineReverse'})">Name</a>
                     <input ng-model="RoutineNameFilter">
                   </th>
-                  <th><a href="" ng-click="routineReverse = routinePredicate == 'Allocations' ? !routineReverse : true; routinePredicate = 'Allocations';">Allocations</a></th>
+                  <th><a href="" ng-click="setPredOrReverse({p: 'Allocations', r: true, pName: 'routinePredicate', rName: 'routineReverse'})">Allocations</a></th>
                 </thead>
                 <tbody>
                   <tr ng-repeat="routine in CurrentAllocatingRoutineStats | filter:RoutineNameFilter | orderBy:routinePredicate:routineReverse">
@@ -539,14 +539,14 @@
       <table class="table table-striped table-condensed table-bordered">
         <thead>
           <th>
-            <a href="" ng-click="reverse = predicate == 'StartTime' ? !reverse : false; predicate = 'StartTime';">Start Time</a>
+            <a href="" ng-click="setPredOrReverse({p: 'StartTime'})">Start Time</a>
           </th>
           <th>
-            <a href="" ng-click="reverse = predicate == 'Run' ? !reverse : false; predicate = 'Run';">Run</a>
+            <a href="" ng-click="setPredOrReverse({p: 'Run'})">Run</a>
           </th>
           <th>Full</th>
           <th>
-            <a href="" ng-click="reverse = predicate == 'Time' ? !reverse : false; predicate = 'Time';">Time</a>
+            <a href="" ng-click="setPredOrReverse({p: 'Time'})">Time</a>
           </th>
           <th>
             Nursery:
@@ -774,6 +774,11 @@
         });
     }());
 
+    // Global veraion of fn. Will be bound to $scope in each controller for access from template.
+    var setPredOrReverse = function ({p, r = false, pName = 'predicate', rName = 'reverse'}) {
+        this[rName] = this[pName] === p ? !this[rName] : r;
+        this[pName] = p;
+    };
 
     // Register application and add controllers, increase recursion depth for callGraphController
     var moarProfApp = angular.module('moarProfApp', ['ui.bootstrap']).config(function($rootScopeProvider) {
@@ -949,6 +954,8 @@
         $scope.Routines  = routineList;
         $scope.predicate = "InclusiveTime";
         $scope.reverse   = true;
+
+        $scope.setPredOrReverse = setPredOrReverse.bind($scope);
     });
 
     moarProfApp.controller('CallGraphController', function ($scope) {
@@ -1059,6 +1066,8 @@
                 };
             });
         }
+
+        $scope.setPredOrReverse = setPredOrReverse.bind($scope);
     });
 
     moarProfApp.controller('AllocationsController', function ($scope, $uibModal) {
@@ -1154,6 +1163,8 @@
                 scope: $scope
             });
         }
+
+        $scope.setPredOrReverse = setPredOrReverse.bind($scope);
     });
 
     moarProfApp.controller('GCController', function ($scope) {
@@ -1185,6 +1196,8 @@
         });
         $scope.predicate = 'Run';
         $scope.reverse = false;
+
+        $scope.setPredOrReverse = setPredOrReverse.bind($scope);
     });
 
     moarProfApp.controller('OSRDeoptController', function ($scope) {
@@ -1254,6 +1267,7 @@
         $scope.predicate = 'Count';
         $scope.reverse   = true;
     });
+    //# sourceURL=moar_profiler_data_display.js
     </script>
   </body>
 </html>
