@@ -189,15 +189,17 @@ my class MASTCompilerInstance {
             if $is_static || $is_cont || $is_state {
                 my int $flags := $is_static ?? 0 !!
                                  $is_cont   ?? 1 !! 2;
-                my $val       := $var.value;
-                my $sc        := nqp::getobjsc($val);
-                if nqp::isnull($sc) {
-                    nqp::die("Object of type " ~ $val.HOW.name($val) ~
-                        " in QAST::Var value, but not in SC");
+                if $kind == $MVM_reg_obj {
+                    my $val       := $var.value;
+                    my $sc        := nqp::getobjsc($val);
+                    if nqp::isnull($sc) {
+                        nqp::die("Object of type " ~ $val.HOW.name($val) ~
+                            " in QAST::Var value, but not in SC");
+                    }
+                    my int $idx    := nqp::scgetobjidx($sc, $val);
+                    my int $sc_idx := $!compiler.mast_compunit.sc_idx($sc);
+                    $mf.add_static_lex_value($index, $flags, $sc_idx, $idx);
                 }
-                my int $idx    := nqp::scgetobjidx($sc, $val);
-                my int $sc_idx := $!compiler.mast_compunit.sc_idx($sc);
-                $mf.add_static_lex_value($index, $flags, $sc_idx, $idx);
             }
             $kind;
         }
