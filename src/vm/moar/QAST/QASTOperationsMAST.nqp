@@ -2718,6 +2718,9 @@ QAST::MASTOperations.add_core_moarop_mapping('setmultispec', 'setmultispec', 0, 
 QAST::MASTOperations.add_core_moarop_mapping('setcontspec', 'setcontspec', 0, :decont(0));
 QAST::MASTOperations.add_core_moarop_mapping('assign', 'assign', 0, :decont(1));
 
+QAST::MASTOperations.add_core_moarop_mapping('range_i', 'range_i');
+QAST::MASTOperations.add_core_moarop_mapping('range_I', 'range_I');
+
 sub try_get_bind_scope($var) {
     if nqp::istype($var, QAST::Var) {
         my str $scope := $var.scope;
